@@ -52,6 +52,10 @@ const Img = styled.img`
     margin-right: 10px;
 `
 
+const Text = styled.div`
+    margin-top: 4px;
+`
+
 interface ICoinData {
     id: string;
     is_active: boolean;
@@ -83,7 +87,9 @@ function Coins () {
                                 }}
                             >
                                 <Img src={`https://cryptoicon-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`} />
-                                {coin.name} &rarr;
+                                <Text>
+                                    {coin.name} &rarr;
+                                </Text>
                             </Link>
                         </Coin>
                     ))}
