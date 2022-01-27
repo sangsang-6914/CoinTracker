@@ -47,7 +47,7 @@ const OverViewItem = styled.div`
 `
 const Loader = styled.div`
     color: ${props => props.theme.textColor};
-    font-size: 36pt;
+    font-size: 24px;
 `
 
 const Description = styled.div`
@@ -147,9 +147,9 @@ function Coin() {
     const {coinId} = useParams<IParam>()
     const {state} = useLocation<RouteState>()
     const { isLoading: coinLoading, data: coinData } = useQuery<ICoinInfo>(['coin', coinId], () => fetchCoinInfo(coinId))
-    const { isLoading: priceLoading, data: priceData } = useQuery<IPriceInfo>(['price', coinId], () => fetchTikerInfo(coinId))
-    console.log(coinData)
-    console.log(priceData)
+    const { isLoading: priceLoading, data: priceData } = useQuery<IPriceInfo>(['price', coinId], () => fetchTikerInfo(coinId), {
+        refetchInterval: 5000
+    })
 
     const isLoading = coinLoading || priceLoading
 

@@ -43,7 +43,7 @@ const Coin = styled.li`
 
 const Loader = styled.span`
     color: ${props => props.theme.textColor};
-    font-size: 20pt;
+    font-size: 24px;
 `
 
 const Img = styled.img`

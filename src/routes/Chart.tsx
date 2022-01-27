@@ -33,9 +33,9 @@ function Chart ({coinId}:IProps) {
                         name: "Price",
                         data: data?.map(p => ({
                             x: new Date(p.time_open),
-                            y: [p.open, p.high, p.low, p.close]
+                            y: [p.open.toFixed(2), p.high.toFixed(2), p.low.toFixed(2), p.close.toFixed(2)]
                         }))
-                    }
+                    },
                 ]}
                 options={{
                     stroke: {
@@ -43,11 +43,10 @@ function Chart ({coinId}:IProps) {
                     },
                     chart: {
                         type: 'candlestick',
-                        height: 350
-                    },
-                    title: {
-                        text: 'CandleStick Chart',
-                        align: 'left'
+                        height: 350,
+                        toolbar: {
+                            show: false,
+                        }
                     },
                     xaxis: {
                         type: 'datetime',
@@ -55,7 +54,7 @@ function Chart ({coinId}:IProps) {
                             style: {
                                 colors: 'white'
                             }
-                        }
+                        },
                     },
                     yaxis: {
                         tooltip: {
@@ -64,9 +63,13 @@ function Chart ({coinId}:IProps) {
                         labels: {
                             style: {
                                 colors: 'white'
-                            }
+                            },
+                            formatter: (val) => `${val} ($)`
                         }
-                    }
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
                 }}
             />
         </div>
