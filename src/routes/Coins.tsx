@@ -64,7 +64,6 @@ interface ICoinData {
 
 function Coins () {
     const { isLoading, data } = useQuery<ICoinData[]>('coins', fetchCoinsList)
-    console.log(data)
     return (
         <Container>
             <Helmet>
@@ -79,7 +78,7 @@ function Coins () {
                         <Coin key={coin.id}>
                             <Link 
                                 to={{
-                                    pathname: `/${coin.id}`,
+                                    pathname: `/${coin.id}/chart`,
                                     state: {name: coin.name}
                                 }}
                             >

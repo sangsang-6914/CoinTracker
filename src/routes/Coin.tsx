@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query'
-import { Link, Route, Switch, useLocation, useParams } from 'react-router-dom'
+import { Link, Route, Switch, useLocation, useParams, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import { fetchCoinInfo, fetchTikerInfo } from '../api/api'
 import { Helmet } from 'react-helmet'
@@ -14,14 +14,25 @@ const Container = styled.div`
 
 const Header = styled.header`
     display: flex;
-    justify-content: center;
-    align-items: center;
     height: 10vh;
-    padding: 20px;
+    padding: 30px 0px;
+`
+const BackIcon = styled.div`
+    flex: 1;
+    float: left;
+    text-align: left;
+    display: table-cell;
+    vertical-align: middle;
 `
 const Title = styled.h1`
-    font-size: 48px;
+    flex: 3;
+    text-align: center;
+    font-size: 40px;
     color: ${props => props.theme.accentColor};
+`
+
+const RightIcon = styled.div`
+    flex: 1;
 `
 
 const OverView = styled.div`
@@ -62,18 +73,32 @@ const Tabs = styled.div`
     margin: 20px 0px;
     a {
         display: block;
+        &:active {
+            color: ${props => props.theme.accentColor}
+        }
     }
 `
 
-const Tab = styled.span`
+const Tab = styled.span<{isActive:boolean}>`
     background-color: rgba(0, 0, 0, 0.5);
     text-transform: uppercase;
     border-radius: 15px;
     font-size: 12px;
     font-weight: 400;
     text-align: center;
-    color: ${props => props.theme.textColor};
+    color: ${props => props.isActive ? props.theme.accentColor : props.theme.textColor};
     padding: 7px 0px;
+`
+
+const Img = styled.img`
+    margin-top: 5px;
+    width: 25px;
+    height: 25px;
+    &:active {
+        background-color: grey;
+        opacity: 0.1;
+        border-radius: 15px;
+    }
 `
 
 interface IParam {
@@ -142,14 +167,17 @@ interface IPriceInfo {
     }
 }
 
-
 function Coin() {
     const {coinId} = useParams<IParam>()
     const {state} = useLocation<RouteState>()
+    const chartMatch = useRouteMatch("/:coinId/chart")
+    const priceMatch = useRouteMatch("/:coinId/price")
     const { isLoading: coinLoading, data: coinData } = useQuery<ICoinInfo>(['coin', coinId], () => fetchCoinInfo(coinId))
     const { isLoading: priceLoading, data: priceData } = useQuery<IPriceInfo>(['price', coinId], () => fetchTikerInfo(coinId), {
         refetchInterval: 5000
     })
+
+    console.log(priceData)
 
     const isLoading = coinLoading || priceLoading
 
@@ -159,7 +187,13 @@ function Coin() {
                 <title>{coinData?.name}</title>
             </Helmet>
             <Header>
+                <BackIcon>
+                    <Link to={'/'}>
+                        <Img src={`${process.env.PUBLIC_URL}/img/backIcon.png`} />
+                    </Link>
+                </BackIcon>
                 <Title>{state?.name ? state.name : isLoading ? "loading..." : coinData?.name}</Title>
+                <RightIcon></RightIcon>
             </Header>
             { isLoading ? (
                 <Loader>Loading...</Loader>
@@ -193,12 +227,12 @@ function Coin() {
                     </OverViewItem>
                 </OverView>
                 <Tabs>
-                    <Tab>
+                    <Tab isActive={chartMatch !== null}>
                         <Link to={`/${coinId}/chart`}>
                             Chart
                         </Link>
                     </Tab>
-                    <Tab>
+                    <Tab isActive={priceMatch !== null}>
                         <Link to={`/${coinId}/price`}>
                             Price
                         </Link>
@@ -209,7 +243,7 @@ function Coin() {
                         <Chart coinId={coinId}/>
                     </Route>
                     <Route path={`/${coinId}/price`}>
-                        <Price />
+                        <Price coinId={coinId} />
                     </Route>
                 </Switch>
                 </>
