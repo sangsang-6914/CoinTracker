@@ -88,6 +88,9 @@ const Tab = styled.span<{isActive:boolean}>`
     text-align: center;
     color: ${props => props.isActive ? props.theme.accentColor : props.theme.textColor};
     padding: 7px 0px;
+    &:hover {
+        color: #013ADF;
+    }
 `
 
 const Img = styled.img`
