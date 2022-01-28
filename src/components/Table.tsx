@@ -6,8 +6,6 @@ interface TableProps {
 }
 
 function Table({ columns, data }:TableProps) {
-    console.log(columns)
-    console.log(data)
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
         {
             // @ts-ignore
@@ -32,7 +30,9 @@ function Table({ columns, data }:TableProps) {
                     return (
                         <tr {...row.getRowProps()}>
                             {row.cells.map(cell => (
+                                <>
                                 <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                                </>
                             ))}
                         </tr>
                     )

@@ -12,7 +12,9 @@ const Loader = styled.div`
 const Styles = styled.div`
     table {
         width: 100%;
-        border: 1px solid black;
+        border: 1px solid rgba(0,0,0,0.9);
+        display: block;
+        border-radius: 15px;
     }
 
     tr {
@@ -26,8 +28,7 @@ const Styles = styled.div`
     td {
         margin: 0;
         padding: 0.5rem;
-        border-bottom: 1px solid black;
-        border-right: 1px solid black;
+        border-bottom: 1px solid rgba(0,0,0,0.9);
 
         :first-child {
             text-align: center;
@@ -45,7 +46,7 @@ const Styles = styled.div`
             color: #2E64FE;
         }
         :nth-child(n+2) {
-            text-align: right;
+            text-align: center;
         }
         font-size: 14px;
     }
@@ -53,6 +54,25 @@ const Styles = styled.div`
         font-size: 14px;
         font-weight: bold;
         color: #A9D0F5;
+        padding: 10px;
+    }
+    th:nth-of-type(1), td:nth-of-type(1) {
+        width: 100px;
+    }
+    th:nth-of-type(2), td:nth-of-type(2) {
+        width: 100px;
+    }
+    th:nth-of-type(3), td:nth-of-type(3) {
+        width: 100px;
+    }
+    th:nth-of-type(4), td:nth-of-type(4) {
+        width: 140px;
+    }
+
+    tbody {
+        display: block;
+        height: 45vh;
+        overflow-y: auto;
     }
 `
 
@@ -75,23 +95,18 @@ function Price ({coinId}:PriceProps) {
     const { isLoading, data: priceData } = useQuery<IPriceData[]>('price', () => fetchCoinHistory(coinId, 8))
     const EXCHANGE_WON = 1207
 
-    const priceArray = priceData?.reverse().map(p => (p.close * EXCHANGE_WON).toFixed(0))
+    const priceArray = priceData?.map(p => (p.close * EXCHANGE_WON).toFixed(0))
     const dayToDayArray = priceArray?.map((p, i, array) => {
-        if (i === array.length-1) {
-            return '0'
+        if (i === 0) {
+            return '1.45'
         }
-        const beforePrice = Number(array[i+1])
         const curPrice = Number(p)
+        const beforePrice = Number(array[i-1])
 
         const gap = curPrice - beforePrice
 
         return (gap / beforePrice * 100).toFixed(2)
-        // 10000, 8000 = 2000 
-        // 10000 = 8000 + (8000 * 40%)
-        // 2000 / 8000 * 100
     })
-
-    console.log(dayToDayArray)
 
     const columns = useMemo(
         () => [
@@ -115,12 +130,12 @@ function Price ({coinId}:PriceProps) {
         []
       )
 
-      const data = useMemo(() => priceData?.map((p, i) => ({
+    const data = useMemo(() => priceData?.map((p, i) => ({
         day: new Date(Date.parse(p.time_open)).toLocaleDateString().replaceAll('.', '-').replace(/ /g, "").slice(0, -1),
         closePrice: inputNumberFormat((p.close * EXCHANGE_WON).toFixed(0)),
-        mirrorPrice: dayToDayArray !== undefined ? `${dayToDayArray[i]}%` : null,
-        volume: p.volume
-      })).reverse(), [priceData]) 
+        mirrorPrice: dayToDayArray !== undefined ? `${dayToDayArray[i]} %` : null,
+        volume: inputNumberFormat(String(p.volume))
+    })).reverse(), [dayToDayArray, priceData]) 
 
     return (
         <div>

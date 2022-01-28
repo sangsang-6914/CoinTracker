@@ -24,7 +24,6 @@ interface IPriceProps {
 
 function Chart ({coinId}:IProps) {
     const { data, isLoading } = useQuery<IPriceProps[]>('history', () => fetchCoinHistory(coinId, 4))
-    console.log(data)
     return (
         <div>
             { isLoading ? (

@@ -180,8 +180,6 @@ function Coin() {
         refetchInterval: 5000
     })
 
-    console.log(priceData)
-
     const isLoading = coinLoading || priceLoading
 
     return (
