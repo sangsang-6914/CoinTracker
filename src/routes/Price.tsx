@@ -1,70 +1,93 @@
 import { useQuery } from "react-query"
 import { fetchCoinHistory } from "../api/api"
-import { useTable } from 'react-table'
 import { useMemo } from "react"
 import styled from "styled-components"
+import Table from "../components/Table"
 
 const Loader = styled.div`
     font-size: 24px;
+`
+
+const Styles = styled.div`
+    border-spacing: 0;
+    border: 1px solid black;
+
+    tr {
+        :last-child {
+            td {
+                border-bottom: 0;
+            }
+        }
+    }
+
+    th,
+    td {
+        margin: 0;
+        padding: 0.5rem;
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
+
+        :last-child {
+            border-right: 0;
+        }
+    }
 `
 
 interface PriceProps {
     coinId: string;
 }
 
-interface TableProps {
-    columns: Array<object>;
-    data: Array<object>;
-}
-
 function Price ({coinId}:PriceProps) {
     const { isLoading, data: priceData } = useQuery('price', () => fetchCoinHistory(coinId, 8))
-    console.log(priceData)
 
-    const columns = [
-        {
-            accessor: 'email',
-            Header: 'Email',
-        },
-        {
-            accessor: 'walletID',
-            Header: 'Wallet ID',
-        },
-        {
-            accessor: 'coin_list',
-            Header: 'Wallet Balance',
-        },
-        {
-            accessor: 'created_at',
-            Header: 'Created At',
-        },
-        {
-            accessor: 'edited_at',
-            Header: 'Edited At',
-        }
-    ]
-    const data = useMemo(() => [{
-        "email": "이메일이에용",
-        "walletID": "아이디에용",
-        "created_at": "2021-08-03 01:14:47",
-        "edited_at": "2021-08-03 01:15:49",
-        "coin_list": ["TRV", "BTC", "BCH", "ETH"]
-    }], [])
+    const columns = useMemo(
+        () => [
+            {
+                Header: '일자',
+                accessor: 'day'
+            },
+            {
+                Header: '종가(KRW)',
+                accessor: 'closePrice'
+            },
+            {
+                Header: '전일대비',
+                accessor: 'mirrorPrice'
+            },
+            {
+                Header: '거래량',
+                accessor: 'volume'
+            }
+        ],
+        []
+      )
 
-    const Table = ({ columns, data }:TableProps) => {
-        const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ 
-            // @ts-ignore 
-            columns, 
-            data
-         })
-    }
+      const data = useMemo(() => Array(24)
+      .fill(0)
+      .map(() => ({
+          day: '2022-01-27',
+          closePrice: '48000',
+          mirrorPrice: '4.56(%)',
+          volume: '1123333'
+      })), []) 
+
+
+    // const Table = ({ columns, data }:TableProps) => {
+    //     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ 
+    //         // @ts-ignore 
+    //         columns, 
+    //         data
+    //      })
+    // }
 
     return (
         <div>
             { isLoading ? (
                 <Loader>Loading...</Loader>
             ) : (
-                <h1>Price</h1>
+                <Styles>
+                    <Table columns={columns} data={data}/>
+                </Styles>
             )}
         </div>
     )
