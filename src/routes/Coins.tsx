@@ -3,6 +3,9 @@ import styled from 'styled-components'
 import { fetchCoinsList } from '../api/api'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { isDarkMode } from '../state/atoms'
+import { MdOutlineLightMode, MdOutlineDarkMode } from 'react-icons/md'
 
 const Container = styled.div`
     padding: 0px 20px;
@@ -15,9 +18,11 @@ const Header = styled.header`
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
 `
 
 const Title = styled.h1`
+    flex: 3;
     font-size: 48px;
     color: ${props => props.theme.accentColor};
 `
@@ -26,8 +31,9 @@ const CoinsList = styled.ul`
 `
 
 const Coin = styled.li`
-    background-color: white;
-    color: ${props => props.theme.bgColor};
+    background-color: ${props => props.theme.bgColor};
+    border: 1px solid ${props => props.theme.textColor};
+    color: ${props => props.theme.textColor};
     margin-bottom: 10px;
     border-radius: 15px;
     a {
@@ -56,6 +62,14 @@ const Text = styled.div`
     margin-top: 4px;
 `
 
+const PreIcon = styled.div`
+    flex: 1;
+`
+
+const ModeIcon = styled.div`
+    flex: 1;
+`
+
 interface ICoinData {
     id: string;
     is_active: boolean;
@@ -67,6 +81,11 @@ interface ICoinData {
 }
 
 function Coins () {
+    const darkMode = useRecoilValue(isDarkMode)
+    const setMode = useSetRecoilState(isDarkMode)
+    const changeMode = () => {
+        setMode(current => !current)
+    }
     const { isLoading, data } = useQuery<ICoinData[]>('coins', fetchCoinsList)
     return (
         <Container>
@@ -74,7 +93,23 @@ function Coins () {
                 <title>Coin Bit</title>
             </Helmet>
             <Header>
+                <PreIcon />
                 <Title>Coin Bit</Title>
+                <ModeIcon>
+                {
+                    darkMode ? (
+                        <MdOutlineLightMode 
+                            onClick={changeMode} 
+                            size={35}
+                        />
+                    ) : (
+                        <MdOutlineDarkMode 
+                            onClick={changeMode}
+                            size={35}
+                        />
+                    )
+                }
+                </ModeIcon>
             </Header>
             { isLoading ? <Loader>Loading...</Loader> :
                 <CoinsList>

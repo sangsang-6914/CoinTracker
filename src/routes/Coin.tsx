@@ -47,7 +47,7 @@ const OverView = styled.div`
 const OverViewItem = styled.div`
     display: flex;
     flex-direction: column;
-    color: ${props => props.theme.textColor};
+    color: white;
     align-items: center;
     span:first-child {
         font-size: 10px;

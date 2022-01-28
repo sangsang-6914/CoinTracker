@@ -1,7 +1,9 @@
 import ApexChart from 'react-apexcharts'
 import { useQuery } from 'react-query'
+import { useRecoilValue } from 'recoil'
 import styled from 'styled-components'
 import { fetchCoinHistory } from '../api/api'
+import { isDarkMode } from '../state/atoms'
 
 const Loader = styled.div`
     font-size: 24px;
@@ -23,6 +25,7 @@ interface IPriceProps {
 }
 
 function Chart ({coinId}:IProps) {
+    const darkMode = useRecoilValue(isDarkMode)
     const { data, isLoading } = useQuery<IPriceProps[]>('history', () => fetchCoinHistory(coinId, 4))
     return (
         <div>
@@ -41,6 +44,9 @@ function Chart ({coinId}:IProps) {
                         },
                     ]}
                     options={{
+                        theme: {
+                            mode: darkMode ? 'light' : 'dark'
+                        },
                         stroke: {
                             width: 1
                         },
